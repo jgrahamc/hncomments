@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+# Requires: jq, recode, sed, curl
+#
+# Copyright (c) 2017 John Graham-Cumming
+
+# Name of file in which to store the timestamp of the last comment downloaded
+f="$HOME/.hnlast"
+
+# The query string to be found in comments (e.g. q="cloudflare")
+q=""
+
+# Email to send found comments to (e.g. e="me@example.com")
+e=""
+
+if [ -e $f ] ; then
+  l=$(<$f)
+else 
+  l=0
+fi
+
+j=`curl -s "https://hn.algolia.com/api/v1/search_by_date?query=$q&tags=comment&numericFilters=created_at_i>$l"`
+
+if [ "$j" == "" ] ; then
+  exit 0
+fi
+
+n=`jq '.hits | .[] | .created_at_i' <(echo $j) | sort -nr | head -n 1` 
+if [ "$n" == "" ] ; then
+  exit 0
+fi
+echo $n > $f
+
+jq -r '.hits | .[] | .author + "\nhttps://news.ycombinator.com/item?id=" + .objectID + "\n\n" + .comment_text + "\n\n---\n\n"' <(echo $j) | sed -e 's/<[^>]*>/ /g;' | recode -f html..ascii | mail -s "Latest $q HN comments" $e
