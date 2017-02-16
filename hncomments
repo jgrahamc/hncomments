@@ -7,10 +7,10 @@
 # Name of file in which to store the timestamp of the last comment downloaded
 f="$HOME/.hnlast"
 
-# The query string to be found in comments (e.g. q="cloudflare")
+# The query string to be found in comments (e.g., q="cloudflare")
 q=""
 
-# Email to send found comments to (e.g. e="me@example.com")
+# Email to send found comments to (e.g., e="me@example.com")
 e=""
 
 if [ -e $f ] ; then
