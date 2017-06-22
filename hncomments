@@ -31,4 +31,4 @@ if [ "$n" == "" ] ; then
 fi
 echo $n > $f
 
-jq -r '.hits | .[] | .author + "\nhttps://news.ycombinator.com/item?id=" + .objectID + "\n\n" + .comment_text + "\n\n---\n\n"' <(echo $j) | sed -e 's/<[^>]*>/ /g;' | recode -f html..ascii | mail -s "Latest $q HN comments" $e
+jq -r '.hits | .[] | .author + "\nhttps://news.ycombinator.com/item?id=" + .objectID + "\n\n" + .comment_text + "\n\n---\n\n"' <(echo "$j") | sed -e 's/<[^>]*>/ /g;' | recode -f html..ascii | mail -s "Latest $q HN comments" $e
